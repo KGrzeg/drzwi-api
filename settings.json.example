@@ -2,5 +2,7 @@
   "ignored_hosts": [
     "00-11-22-33-44-55",
     "66-77-88-99-AA-BB"
-  ]
+  ],
+  "api_url": "192.168.1.1",
+  "cookie": "Authorization=I%20am%20not%20a%20real%20cookie%2C%20you%20know"
 }
