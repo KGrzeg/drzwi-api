@@ -1,5 +1,20 @@
 const fs = require("fs");
 
+function tryToRequire(path, default_value) {
+  try {
+    return require(path);
+  } catch (err) {
+    if (err.code == 'MODULE_NOT_FOUND') {
+      return default_value;
+    }
+  }
+}
+
+const settings = tryToRequire("./settings.json", {
+  ignored_hosts: []
+});
+
+
 const example_output = fs.readFileSync("example_request.txt", "utf-8");
 
 function readDHCPList(request_body) {
@@ -30,6 +45,10 @@ function readDHCPList(request_body) {
   return data;
 }
 
+function filterIgnoredDevices(devices) {
+  return devices.filter(device => settings.ignored_hosts.indexOf(device.MAC) === -1);
+}
+
 const devices = readDHCPList(example_output);
 
-console.table(devices);
+console.table(filterIgnoredDevices(devices));
