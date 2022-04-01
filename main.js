@@ -8,6 +8,9 @@ function readDHCPList(request_body) {
   const scriptBodies = scriptTags.map(scr => typeof scr[1] == 'string' ? scr[1].trim() : '');
   const interestingScript = scriptBodies.find(src => src.startsWith('var DHCPDynList'));
 
+  if (!interestingScript)
+    return undefined;
+
   let lines = interestingScript.split("\n");
   lines = lines.slice(1, -1);                             //drop first and last lines
   let data = lines.map(
