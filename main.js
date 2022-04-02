@@ -1,4 +1,4 @@
-const fs = require("fs");
+"use strict"
 const axios = require("axios");
 
 function tryToRequire(path, default_value) {
@@ -17,7 +17,6 @@ const settings = tryToRequire("./settings.json", {
   "cookie": "Authorization=I%20am%20not%20a%20real%20cookie%2C%20you%20know"
 });
 
-const example_output = fs.readFileSync("example_request.txt", "utf-8");
 
 function readDHCPList(request_body) {
   const scriptsRe = /<script[^>]*>([^]*?)<\/script>/igm;
@@ -86,7 +85,31 @@ async function getDevices() {
 }
 
 async function main() {
-  const devices = await getDevices(example_output);
+  let devices;
+
+  if (process.env.NODE_ENV == "dev") {
+    const fs = require("fs");
+    try {
+      const example_output = fs.readFileSync("example_request.txt", "utf-8");
+      devices = readDHCPList(example_output);
+      devices = filterIgnoredDevices(devices);
+    } catch (err) {
+      console.log(err.message);
+      devices = undefined;
+    }
+
+  } else {
+    try {
+      devices = await getDevices();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.log(err.message);
+        devices = undefined;
+      } else {
+        throw err;
+      }
+    }
+  }
 
   if (devices) {
     console.table(devices);

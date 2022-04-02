@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "dev": "NODE_ENV=dev node main.js"
   },
   "keywords": [],
   "author": "Grzegorz Kupczyk",
