@@ -84,6 +84,22 @@ async function getDevices() {
   return filterIgnoredDevices(devices);
 }
 
+function printStatus(devices) {
+  if (process.env.NODE_ENV == "dev") { //dev
+    //display in human-friendly form to terminal
+    if (devices)
+      console.table(devices);
+    else
+      console.error("Devices not found");
+
+  } else { //prod
+    //display as API
+    console.log(JSON.stringify({
+      status: (devices && devices.length) ? "open" : "closed"
+    }));
+  }
+}
+
 async function main() {
   let devices;
 
@@ -94,7 +110,7 @@ async function main() {
       devices = readDHCPList(example_output);
       devices = filterIgnoredDevices(devices);
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       devices = undefined;
     }
 
@@ -103,7 +119,7 @@ async function main() {
       devices = await getDevices();
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.log(err.message);
+        console.error(err.message);
         devices = undefined;
       } else {
         throw err;
@@ -111,11 +127,7 @@ async function main() {
     }
   }
 
-  if (devices) {
-    console.table(devices);
-  } else {
-    console.log("Devices not found");
-  }
+  printStatus(devices);
 }
 
 main();
