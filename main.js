@@ -93,10 +93,14 @@ function printStatus(devices) {
       console.error("Devices not found");
 
   } else { //prod
-    //display as API
-    console.log(JSON.stringify({
+    const response = {
       status: (devices && devices.length) ? "open" : "closed"
-    }));
+    }
+    if (devices === undefined)
+      response.error = true;
+
+    //display as API
+    console.log(JSON.stringify(response));
   }
 }
 
